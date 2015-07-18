@@ -112,7 +112,7 @@ Back behaviour that is triggered from a `BackButton` in your templates will pass
 
 #### BackBehaviour.goBack Function
 
-You can also trigger back behaviour from within your code using the `BackBehaviour.onBack` function. This function accepts two optional arguments that are passed into your back behaviour callback function(s).
+You can also trigger back behaviour from within your code using the `BackBehaviour.goBack` function. This function accepts two optional arguments that are passed into your back behaviour callback function(s).
 
 1. (optional) The `details` object. You can pass any meta information you'd like.
 1. (optional) The `origin` string. This will be set to `custom` if you do not pass a string.
