@@ -1,11 +1,10 @@
 Template.BackButton.events({
-  'click .back-button-wrapper': function (event) {
-    var dataContext = Blaze.getData(event.target),
-        templateInstance = Template.instance();
+  'click .back-behaviour-back-button-wrapper': function (event) {
+    var dataContext = Blaze.getData(event.target);
 
-    var onBack = BackBehaviour._getContextBoundOnBack(templateInstance);
-    if (onBack) {
-      onBack(BackBehaviour._detailsObj({ dataContext: dataContext, templateEvent: event}), 'BackButton_click');
-    }
+    BackBehaviour.goBack({
+      dataContext: dataContext,
+      templateEvent: event
+    }, 'BackButton_click');
   }
 });

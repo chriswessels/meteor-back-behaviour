@@ -20,6 +20,10 @@ In your Meteor.js project directory, run
 
 ## Usage
 
+1. Defining back behaviour
+2. Triggering the back behaviour you've defined
+3. Cordova integration
+
 ### Defining Back Behaviour
 
 You can define back behaviour in your Blaze Templates and (if you are using `iron-router`) your route controllers.
@@ -142,6 +146,26 @@ Template.SomeTemplate.events({
   }
 });
 ```
+
+### Cordova Integration
+
+This plugin was built with Cordova integration in mind because mobile apps often contain in-app back buttons. A potential UX pitfall with Android devices is the hardware back button. By default, this will trigger `history.go(-1)`, which will take the user back to the previous page in their history. This is obviously undesirable.
+
+You can eliminate this issue and attach the back behaviour you've defined to the hardware back button by calling the `BackButton.attachToHardwareBackButton` function with a boolean argument.
+
+Example:
+
+```javascript
+Meteor.startup(function () {
+  BackButton.attachToHardwareBackButton(true);
+  // You can later unattach and revert to the default behaviour with
+  // BackButton.attachToHardwareBackButton(false);
+});
+```
+
+This example will present a consistent UX to your users on Android by attaching on app startup.
+
+Back behaviour callback functions will have their origin argument set to `HardwareBackButton_press` when triggered by the hardware back button.
 
 ## License
 
