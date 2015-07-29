@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'meteor-back-behaviour',
+  name: 'chriswessels:back-behaviour',
   version: '0.2.0',
   summary: 'A pattern for defining and triggering in-app back button behaviour',
   git: 'https://github.com/chriswessels/meteor-back-behaviour.git'
