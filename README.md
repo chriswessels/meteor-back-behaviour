@@ -167,7 +167,7 @@ This example will present a consistent UX to your users on Android by attaching 
 
 Back behaviour callback functions will have their origin argument set to `HardwareBackButton_press` when triggered by the hardware back button.
 
-**Currently, hardware button integration will looking for back behaviour exclusively on your active iron-router controller, not in your template tree.**
+**Currently, hardware button integration will look for back behaviour exclusively on your active iron-router controller, not in your template tree.**
 
 ## License
 
