@@ -15,14 +15,28 @@ BackBehaviour._checkViewTreeForCallback = function _checkViewTreeForCallback (vi
 };
 
 BackBehaviour._getContextBoundOnBack = function _getContextBoundOnBack (originTemplateInstance) {
-  // Walk up the view tree to look for onBack defined on templates
-  var viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view);
-  if (viewWithOnBack) {
-    // If we find a callback in the view tree, return it bound to its template instance
-    return viewWithOnBack.template._onBack.bind(viewWithOnBack.templateInstance());
-  } else if (typeof Iron !== 'undefined' && typeof Iron.controller === 'function') {
-    // Else look for callback defined on the controller (if `iron-router` is in use)
-    var controller = Iron.controller();
+  var controller;
+  
+  if (originTemplateInstance) {
+    // Walk up the view tree to look for onBack defined on templates
+    var viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view);
+    if (viewWithOnBack) {
+      // If we find a callback in the view tree, return it bound to its template instance
+      return viewWithOnBack.template._onBack.bind(viewWithOnBack.templateInstance());
+    } else if (typeof Iron !== 'undefined' && typeof Iron.controller === 'function') {
+      // Else look for callback defined on the controller (if `iron-router` is in use)
+      controller = Iron.controller();
+      if (typeof controller.onBack === 'function') {
+        // Found one, return bound to controller
+        return controller.onBack.bind(controller);
+      } else {
+        // Hmm, no more options :(
+        console.warn('BackBehaviour did not find an onBack callback to execute.');
+        return null;
+      }
+    }
+  } else if (typeof Router !== 'undefined' && typeof Router.current === 'function') {
+    controller = Router.current();
     if (typeof controller.onBack === 'function') {
       // Found one, return bound to controller
       return controller.onBack.bind(controller);
@@ -61,7 +75,7 @@ BackBehaviour._onHardwareBackButtonDown = function (event) {
   event.stopPropagation();
 
   // send user back via back-behaviour
-  this.goBack({
+  BackBehaviour.goBack({
     templateEvent: event,
   }, 'HardwareBackButton_press');
 };

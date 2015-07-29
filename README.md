@@ -26,11 +26,11 @@ In your Meteor.js project directory, run
 
 ### Defining Back Behaviour
 
-You can define back behaviour in your Blaze Templates and (if you are using `iron-router`) your route controllers.
+You can define back behaviour in your iron-router Controllers and your Blaze Templates.
 
 Back Behaviour is defined using a callback function, so you can do anything. This could be sending the user to another route, or modifying `Session` or another `ReactiveDict` to trigger UI behaviour.
 
-The `this` context of your callback function will be set to the instance of the object in which it is defined. So, if it is defined in a template, `this` will be the corresponding `Blaze.TemplateInstance`. If it is defined on an `iron-router` route controller, it will be the corresponding `Iron.Controller`.
+The `this` context of your callback function will be set to the instance of the object in which it is defined. If it is defined on an `iron-router` route controller, it will be the corresponding `Iron.Controller`. If it is defined in a template, `this` will be the corresponding `Blaze.TemplateInstance`.
 
 The callback will receive two arguments:
 
@@ -41,27 +41,9 @@ These arguments are purely there to enable you to determine what you want to do 
 
 More information on what these arguments will contain is in the **Triggering Back Behaviour** section below. *Hint: You can customise them if you use `BackBehaviour.goBack`.*
 
-#### Defining Back Behaviour in your templates
-
-This package provides a `Template.foo.onBack` function for specifying a back behaviour callback function.
-
-Example:
-
-```javascript
-Template.Settings.onBack(function (details, origin) {
-  // `this` will be the `Blaze.TemplateInstance` for the Settings template.
-  // `details` will contain meta information.
-  // `origin` will describe where the back event originated.
-
-  // I could Router.go here to send the user to another route
-  // or I could modify a ReactiveDict on the TemplateInstance and propagate a UI change
-  // or anything else...
-});
-```
-
-If back behaviour is triggered (see triggering details below) from any template that is nested under the `Settings` template, this callback function will be fired and you can deal with it appropriately (unless onBack has been defined in a deeper-nested template in the current template tree).
-
 #### Defining Back Behaviour in your iron-router controllers
+
+Defining back behaviour on your route controllers is the recommended approach as it lets you define a navigational hierarchy entirely in your routing layer.
 
 If you are using `iron-router` you can specify back behaviour for a route with the `onBack` property. This must be done in your `Iron.Controller` definition.
 
@@ -83,7 +65,25 @@ ActivityController = RouteController.extend({
 });
 ```
 
-Defining back behaviour on your route controllers let's you define a navigational hierarchy entirely in your routing layer.
+#### Defining Back Behaviour in your templates
+
+This package provides a `Template.foo.onBack` function for specifying a back behaviour callback function.
+
+Example:
+
+```javascript
+Template.Settings.onBack(function (details, origin) {
+  // `this` will be the `Blaze.TemplateInstance` for the Settings template.
+  // `details` will contain meta information.
+  // `origin` will describe where the back event originated.
+
+  // I could Router.go here to send the user to another route
+  // or I could modify a ReactiveDict on the TemplateInstance and propagate a UI change
+  // or anything else...
+});
+```
+
+If back behaviour is triggered (see triggering details below) from any template that is nested under the `Settings` template, this callback function will be fired and you can deal with it appropriately (unless onBack has been defined in a deeper-nested template in the current template tree).
 
 ### Triggering Back Behaviour
 
@@ -166,6 +166,8 @@ Meteor.startup(function () {
 This example will present a consistent UX to your users on Android by attaching on app startup.
 
 Back behaviour callback functions will have their origin argument set to `HardwareBackButton_press` when triggered by the hardware back button.
+
+**Currently, hardware button integration will looking for back behaviour exclusively on your active iron-router controller, not in your template tree.**
 
 ## License
 
