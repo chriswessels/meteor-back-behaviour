@@ -157,9 +157,9 @@ Example:
 
 ```javascript
 Meteor.startup(function () {
-  BackButton.attachToHardwareBackButton(true);
+  BackBehaviour.attachToHardwareBackButton(true);
   // You can later unattach and revert to the default behaviour with
-  // BackButton.attachToHardwareBackButton(false);
+  // BackBehaviour.attachToHardwareBackButton(false);
 });
 ```
 
