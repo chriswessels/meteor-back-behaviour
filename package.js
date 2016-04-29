@@ -1,6 +1,6 @@
 Package.describe({
   name: 'chriswessels:back-behaviour',
-  version: '1.0.0',
+  version: '1.0.1',
   summary: 'A pattern for defining and triggering in-app back button behaviour',
   git: 'https://github.com/chriswessels/meteor-back-behaviour.git'
 });
