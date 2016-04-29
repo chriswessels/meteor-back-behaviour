@@ -38,10 +38,10 @@ BackBehaviour._getContextBoundOnBack = function _getContextBoundOnBack (originTe
   var viewWithOnBack, routerCallback;
   if (originTemplateInstance) {
     // Walk up the view tree to look for onBack defined on templates
-    viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view)
-  } else {
-    routerCallback = BackBehaviour._getRouterOnBackCallback();
+    viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view);
   }
+
+  routerCallback = BackBehaviour._getRouterOnBackCallback();
 
   if (viewWithOnBack) {
     // If we find a callback in the view tree, return it bound to its template instance
