@@ -14,37 +14,44 @@ BackBehaviour._checkViewTreeForCallback = function _checkViewTreeForCallback (vi
   }
 };
 
-BackBehaviour._getContextBoundOnBack = function _getContextBoundOnBack (originTemplateInstance) {
-  var controller;
-  
-  if (originTemplateInstance) {
-    // Walk up the view tree to look for onBack defined on templates
-    var viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view);
-    if (viewWithOnBack) {
-      // If we find a callback in the view tree, return it bound to its template instance
-      return viewWithOnBack.template._onBack.bind(viewWithOnBack.templateInstance());
-    } else if (typeof Iron !== 'undefined' && typeof Iron.controller === 'function') {
-      // Else look for callback defined on the controller (if `iron-router` is in use)
-      controller = Iron.controller();
-      if (typeof controller.onBack === 'function') {
-        // Found one, return bound to controller
-        return controller.onBack.bind(controller);
-      } else {
-        // Hmm, no more options :(
-        console.warn('BackBehaviour did not find an onBack callback to execute.');
-        return null;
-      }
-    }
-  } else if (typeof Router !== 'undefined' && typeof Router.current === 'function') {
-    controller = Router.current();
+BackBehaviour._getRouterOnBackCallback = function _getRouterOnBackCallback () {
+  // Check for iron-router
+  if (typeof Router !== 'undefined' && typeof Router.current === 'function') {
+    var controller = Router.current();
     if (typeof controller.onBack === 'function') {
       // Found one, return bound to controller
       return controller.onBack.bind(controller);
-    } else {
-      // Hmm, no more options :(
-      console.warn('BackBehaviour did not find an onBack callback to execute.');
-      return null;
-    }
+    } else return null;
+  // Check for flow-router
+  } else if (typeof FlowRouter !== 'undefined' && typeof FlowRouter.current === 'function') {
+    var controller = FlowRouter.current(),
+        routeOptions = controller.route && controller.route.options;
+    if (routeOptions && typeof routeOptions.onBack === 'function') {
+      return routeOptions.onBack.bind(controller);
+    } else return null;
+  } else {
+    return null;
+  }
+}
+
+BackBehaviour._getContextBoundOnBack = function _getContextBoundOnBack (originTemplateInstance) {
+  var viewWithOnBack, routerCallback;
+  if (originTemplateInstance) {
+    // Walk up the view tree to look for onBack defined on templates
+    viewWithOnBack = this._checkViewTreeForCallback(originTemplateInstance.view)
+  } else {
+    routerCallback = BackBehaviour._getRouterOnBackCallback();
+  }
+
+  if (viewWithOnBack) {
+    // If we find a callback in the view tree, return it bound to its template instance
+    return viewWithOnBack.template._onBack.bind(viewWithOnBack.templateInstance());
+  } else if (routerCallback) {
+    return routerCallback;
+  } else {
+    // Hmm, no more options :(
+    console.warn('BackBehaviour did not find an onBack callback to execute.');
+    return null;
   }
 };
 

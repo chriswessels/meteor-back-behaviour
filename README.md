@@ -8,7 +8,7 @@ Well, when you have an in-app back button, sometimes it's difficult to determine
 
 ### How?
 
-This package allows you to define back button behaviour on your Blaze templates and (optionally) your `iron-router` controllers. When someone clicks your in-app back button, this package will traverse the current template tree (bottom-up) to determine what it should do to send your user back. If it doesn't find back behaviour in the current template tree and you are using `iron-router`, it will check your route controller for back behaviour too.
+This package allows you to define back button behaviour on your Iron Router controllers, Flow Router routes or Blaze templates. When someone clicks your in-app back button, this package will traverse the current template tree (bottom-up) to determine what it should do to send your user back. If it doesn't find back behaviour in the current template tree and you are using Iron Router or Flow Router, it will check your route for back behaviour too.
 
 The versatility of this functionality becomes especially powerful with highly nested routes or templates because you can defer back behaviour to the higher order template or route context.
 
@@ -26,11 +26,11 @@ In your Meteor.js project directory, run
 
 ### Defining Back Behaviour
 
-You can define back behaviour in your iron-router Controllers and your Blaze Templates.
+You can define back behaviour in your Iron Router Controllers or Flow Router route definitions and your Blaze Templates.
 
 Back Behaviour is defined using a callback function, so you can do anything. This could be sending the user to another route, or modifying `Session` or another `ReactiveDict` to trigger UI behaviour.
 
-The `this` context of your callback function will be set to the instance of the object in which it is defined. If it is defined on an `iron-router` route controller, it will be the corresponding `Iron.Controller`. If it is defined in a template, `this` will be the corresponding `Blaze.TemplateInstance`.
+The `this` context of your callback function will be set to the instance of the object in which it is defined. If it is defined on a route, it will be the corresponding route controller object. If it is defined in a template, `this` will be the corresponding `Blaze.TemplateInstance`.
 
 The callback will receive two arguments:
 
@@ -41,9 +41,11 @@ These arguments are purely there to enable you to determine what you want to do 
 
 More information on what these arguments will contain is in the **Triggering Back Behaviour** section below. *Hint: You can customise them if you use `BackBehaviour.goBack`.*
 
-#### Defining Back Behaviour in your iron-router controllers
+#### Defining Back Behaviour in your Routes
 
-Defining back behaviour on your route controllers is the recommended approach as it lets you define a navigational hierarchy entirely in your routing layer.
+Defining back behaviour on your routes is the recommended approach as it lets you define a navigational hierarchy entirely in your routing layer.
+
+##### Iron Router
 
 If you are using `iron-router` you can specify back behaviour for a route with the `onBack` property. This must be done in your `Iron.Controller` definition.
 
@@ -61,6 +63,26 @@ ActivityController = RouteController.extend({
     // I could Router.go here to send the user to another route
     // or I could modify a ReactiveDict like `this.state`
     // or anything else...
+  }
+});
+```
+
+##### Flow Router
+
+For FlowRouter, just add an `onBack` key, defined as a function, to your route definition.
+
+Example:
+
+```javascript
+FlowRouter.route('/notifications', {
+  name: 'notifications',
+  onBack: function (details, origin) {
+    // `this` will be the `FlowRouter.current()` object
+    // `details` will contain meta information.
+    // `origin` will describe where the back event originated.
+  },
+  action: function () {
+    BlazeLayout.render('ApplicationLayout', { templateName: 'Notifications' });
   }
 });
 ```
